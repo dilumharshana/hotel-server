@@ -30,14 +30,14 @@ def handleUpdateOffer():
     return updateOffer(request.json)
 
 
-@app.route('/offer', methods=['PUT'])
+@app.route('/activate-offer', methods=['PUT'])
 def handleActivateOffer():
     return activateOffer(request.json)
 
 
-@app.route('/offer', methods=['DELETE'])
-def handleDeleteOffer():
-    return deleteOffer(request.json)
+@app.route('/offer/<int:id>', methods=['DELETE'])
+def handleDeleteOffer(id):
+    return deleteOffer(id)
 
 
 @app.route('/offers', methods=['GET'])

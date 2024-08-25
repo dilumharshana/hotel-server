@@ -19,5 +19,5 @@ def activateOffer(offerData):
     return offer.handleActivateOffer(offerData)
 
 
-def deleteOffer(offerData):
-    return offer.deleteOffer(offerData)
+def deleteOffer(offerId):
+    return offer.deleteOffer(offerId)

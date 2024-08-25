@@ -51,12 +51,12 @@ class Offer:
         finally:
             cursor.close()
 
-    def deleteOffer(self, offerData):
+    def deleteOffer(self, offerId):
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor()
             query = 'DELETE FROM `hotel`.`offers` WHERE (`ID` = %s);'
-            cursor.execute(query, (offerData['id']))
+            cursor.execute(query, (offerId,))
             connection.commit()
             rowCount = cursor.rowcount
             print("offerId =>", rowCount)
