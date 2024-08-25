@@ -8,13 +8,59 @@ class Offer:
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor()
-            query = 'INSERT INTO `hotel`.`offers` (`NAME`, `DESCRIPTION`, `IS_ACTIVE`, `THUBNAIL`, `ENDING_DATE`) VALUES (%s, %s, %s, %s, %s);'
+            query = 'INSERT INTO `hotel`.`offers` (`NAME`, `DESCRIPTION`, `IS_ACTIVE`, `THUMBNAIL`, `ENDING_DATE`) VALUES (%s, %s, %s, %s, %s);'
             cursor.execute(query, (offerData['name'],
                                    offerData['description'], offerData['isActive'], offerData['thumbnailUrl'], offerData['endingDate']))
             connection.commit()
             offerId = cursor.lastrowid
             print("offerId =>", offerId)
-            return jsonify({'offerData': offerData, 'offerId': offerId}), 200
+            return jsonify({'offerId': offerId}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+        finally:
+            cursor.close()
+
+    def updateOffer(self, offerData):
+        try:
+            connection = db.get_db_connection()
+            cursor = connection.cursor()
+            query = 'UPDATE `hotel`.`offers` SET `NAME` = %s, `DESCRIPTION` = %s, `IS_ACTIVE` = %s, `THUMBNAIL` = %s, `ENDING_DATE` = %s WHERE (`ID` = %s);'
+            cursor.execute(query, (offerData['name'],
+                                   offerData['description'], offerData['isActive'], offerData['thumbnailUrl'], offerData['endingDate'], offerData['id']))
+            connection.commit()
+            rowCount = cursor.rowcount
+            print("offerId =>", rowCount)
+            return jsonify({'offerId': rowCount}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+        finally:
+            cursor.close()
+
+    def handleActivateOffer(self, offerData):
+        try:
+            connection = db.get_db_connection()
+            cursor = connection.cursor()
+            query = 'UPDATE `hotel`.`offers` SET `IS_ACTIVE` = %s WHERE (`ID` = %s);'
+            cursor.execute(query, (offerData['activation'], offerData['id']))
+            connection.commit()
+            rowCount = cursor.rowcount
+            print("offerId =>", rowCount)
+            return jsonify({'offerId': rowCount}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+        finally:
+            cursor.close()
+
+    def deleteOffer(self, offerData):
+        try:
+            connection = db.get_db_connection()
+            cursor = connection.cursor()
+            query = 'DELETE FROM `hotel`.`offers` WHERE (`ID` = %s);'
+            cursor.execute(query, (offerData['id']))
+            connection.commit()
+            rowCount = cursor.rowcount
+            print("offerId =>", rowCount)
+            return jsonify({'offerId': rowCount}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
         finally:
@@ -23,7 +69,7 @@ class Offer:
     def getAllOffers(self):
         try:
             connection = db.get_db_connection()
-            cursor = connection.cursor()
+            cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM OFFERS')
             offers = cursor.fetchall()
             cursor.close()

@@ -9,3 +9,15 @@ def createOffer(offerData):
 
 def getAllOffers():
     return offer.getAllOffers()
+
+
+def updateOffer(offerData):
+    return offer.updateOffer(offerData)
+
+
+def activateOffer(offerData):
+    return offer.handleActivateOffer(offerData)
+
+
+def deleteOffer(offerData):
+    return offer.deleteOffer(offerData)
