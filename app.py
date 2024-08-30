@@ -66,9 +66,9 @@ def handleDeleteService(id):
     return deleteService(id)
 
 
-@app.route('/service', methods=['GET'])
+@app.route('/services', methods=['GET'])
 def getService():
-    return getAllServices()
+    return getAllService()
 
 
 if __name__ == '__main__':

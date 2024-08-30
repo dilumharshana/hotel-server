@@ -4,20 +4,20 @@ service = Service()
 
 
 def createService(serviceData):
-    return offer.createService(serviceData)
+    return service.createService(serviceData)
 
 
 def getAllService():
-    return offer.getAllService()
+    return service.getAllServices()
 
 
 def updateService(serviceData):
-    return offer.updateService(serviceData)
+    return service.updateService(serviceData)
 
 
 def activateService(serviceData):
-    return offer.handleActivateService(serviceData)
+    return service.handleActivateService(serviceData)
 
 
 def deleteService(offerId):
-    return offer.deleteService(offerId)
+    return service.deleteService(offerId)

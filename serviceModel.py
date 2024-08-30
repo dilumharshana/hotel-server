@@ -8,9 +8,9 @@ class Service:
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor()
-            query = 'INSERT INTO `hotel`.`services` (`NAME`, `DESCRIPTION`, `IS_ACTIVE`, `THUMBNAIL`, `ENDING_DATE`) VALUES (%s, %s, %s, %s, %s);'
+            query = 'INSERT INTO `hotel`.`services` (`NAME`, `DESCRIPTION`, `IS_ACTIVE`) VALUES (%s, %s, %s);'
             cursor.execute(query, (serviceData['name'],
-                                   serviceData['description'], serviceData['isActive'], serviceData['thumbnailUrl'], serviceData['endingDate']))
+                                   serviceData['description'], serviceData['isActive']))
             connection.commit()
             serviceId = cursor.lastrowid
             print("serviceId =>", serviceId)
@@ -24,9 +24,9 @@ class Service:
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor()
-            query = 'UPDATE `hotel`.`services` SET `NAME` = %s, `DESCRIPTION` = %s, `IS_ACTIVE` = %s, `THUMBNAIL` = %s, `ENDING_DATE` = %s WHERE (`ID` = %s);'
+            query = 'UPDATE `hotel`.`services` SET `NAME` = %s, `DESCRIPTION` = %s, `IS_ACTIVE` = %s WHERE (`ID` = %s);'
             cursor.execute(query, (serviceData['name'],
-                                   serviceData['description'], serviceData['isActive'], serviceData['thumbnailUrl'], serviceData['endingDate'], serviceData['id']))
+                                   serviceData['description'], serviceData['isActive'], serviceData['id']))
             connection.commit()
             rowCount = cursor.rowcount
             print("serviceId =>", rowCount)
