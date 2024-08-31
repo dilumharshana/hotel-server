@@ -53,6 +53,7 @@ class Service:
             cursor.close()
 
     def deleteService(self, serviceId):
+        cursor = None
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor()
@@ -68,12 +69,12 @@ class Service:
             cursor.close()
 
     def getAllServices(self):
+        cursor = None
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM SERVICES')
             services = cursor.fetchall()
-            cursor.close()
             return jsonify({'services': services}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500

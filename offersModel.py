@@ -72,7 +72,6 @@ class Offer:
             cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM OFFERS')
             offers = cursor.fetchall()
-            cursor.close()
             return jsonify({'offers': offers}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
