@@ -27,7 +27,9 @@ class RoomReservationStrategy(ReservationStrategy):
             return None, "No rooms available for the specified dates."
 
         # Randomly select a room
-        selected_room = random.choice(available_rooms)
+        selected_room = random.choice(available_rooms)[1]
+
+        print(data)
 
         print("selected_room ==>", selected_room)
 
@@ -38,11 +40,12 @@ class RoomReservationStrategy(ReservationStrategy):
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
         values = (data['customer_name'], data['customer_email'], 'room',
-                  selected_room['id'], data['check_in_date'], data['check_out_date'],
+                  selected_room, data['check_in_date'], data['check_out_date'],
                   data['num_adults'])
+
         cursor.execute(query, values)
 
-        return cursor.lastrowid, selected_room['room_number']
+        return selected_room
 
     def check_availability(self, cursor, data):
         available_rooms = self.get_available_rooms(
@@ -108,15 +111,14 @@ class ReservationHandler:
             if not strategy.check_availability(cursor, data):
                 return jsonify({'error': 'Not available for the specified dates'}), 400
 
-            reservation_id = strategy.create_reservation(cursor, data)
+            selected_room = strategy.create_reservation(cursor, data)
             connection.commit()
-            return jsonify({'message': 'Reservation created successfully', 'id': reservation_id}), 200
-        except mysql.connector.Error as err:
+            return jsonify({'message': 'Reservation created successfully', 'room_number': selected_room}), 200
+        except Exception as err:
             connection.rollback()
-            return jsonify({'error': f'Database error: {err}'}), 500
+            return jsonify({'error: {err}'}), 500
         finally:
             cursor.close()
-            connection.close()
 
     def update_reservation(self, reservation_id, data):
         connection = mysql.connector.connect(**db_config)
@@ -140,7 +142,7 @@ class ReservationHandler:
 
             connection.commit()
             return jsonify({'message': 'Reservation updated successfully'}), 200
-        except mysql.connector.Error as err:
+        except Exception as err:
             connection.rollback()
             return jsonify({'error': f'Database error: {err}'}), 500
         finally:
@@ -160,7 +162,7 @@ class ReservationHandler:
 
             connection.commit()
             return jsonify({'message': 'Reservation deleted successfully'}), 200
-        except mysql.connector.Error as err:
+        except Exception as err:
             connection.rollback()
             return jsonify({'error': f'Database error: {err}'}), 500
         finally:
@@ -169,7 +171,7 @@ class ReservationHandler:
 
     def get_available_rooms(self, start_date, end_date):
         connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor()
 
         try:
             query = """
@@ -186,7 +188,7 @@ class ReservationHandler:
                            end_date, end_date, start_date, end_date))
             available_rooms = cursor.fetchall()
             return jsonify(available_rooms), 200
-        except mysql.connector.Error as err:
+        except Exception as err:
             return jsonify({'error': f'Database error: {err}'}), 500
         finally:
             cursor.close()
@@ -194,7 +196,7 @@ class ReservationHandler:
 
     def get_available_banquet_halls(self, date):
         connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor()
 
         try:
             query = """
@@ -208,10 +210,8 @@ class ReservationHandler:
             cursor.execute(query, (date,))
             available_halls = cursor.fetchall()
             return jsonify(available_halls), 200
-        except mysql.connector.Error as err:
+        except Exception as err:
             return jsonify({'error': f'Database error: {err}'}), 500
         finally:
             cursor.close()
             connection.close()
-
-# API routes
