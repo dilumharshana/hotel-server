@@ -115,13 +115,26 @@ class ReservationHandler:
             connection.commit()
             return jsonify({'message': 'Reservation created successfully', 'room_number': selected_room}), 200
         except Exception as err:
-            connection.rollback()
             return jsonify({'error: {err}'}), 500
         finally:
             cursor.close()
 
+    def get_all_reservations(self):
+        connection = db.get_db_connection()
+        cursor = connection.cursor(buffered=True, dictionary=True)
+
+        try:
+
+            cursor.execute('SELECT * FROM RESERVATIONS')
+            reservations = cursor.fetchall()
+
+            cursor.close()
+            return jsonify({'reservations': reservations}), 200
+        except Exception as err:
+            return jsonify({'error: {err}'}), 500
+
     def update_reservation(self, reservation_id, data):
-        connection = mysql.connector.connect(**db_config)
+        connection = db.get_db_connection()
         cursor = connection.cursor()
 
         try:
@@ -143,7 +156,6 @@ class ReservationHandler:
             connection.commit()
             return jsonify({'message': 'Reservation updated successfully'}), 200
         except Exception as err:
-            connection.rollback()
             return jsonify({'error': f'Database error: {err}'}), 500
         finally:
             cursor.close()
@@ -163,7 +175,6 @@ class ReservationHandler:
             connection.commit()
             return jsonify({'message': 'Reservation deleted successfully'}), 200
         except Exception as err:
-            connection.rollback()
             return jsonify({'error': f'Database error: {err}'}), 500
         finally:
             cursor.close()

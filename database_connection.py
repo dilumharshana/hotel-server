@@ -28,7 +28,7 @@ class DatabaseConnector:
                 )
 
                 if self._connection.is_connected():
-
+                    self._connection.cursor(buffered=True)
                     print("Connected to the database")
             except Error as e:
                 print("Error : ", e)

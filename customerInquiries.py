@@ -25,9 +25,10 @@ class Inquiry:
     def getAllInquiries(self, ):
         try:
             connection = db.get_db_connection()
-            cursor = connection.cursor()
+            cursor = connection.cursor(buffered=True, dictionary=True)
 
-            cursor.execute('SELECT * FROM INQURIES')
+            cursor.execute(
+                'SELECT i.*, u.* FROM INQUIRES i INNER JOIN USERS u ON i.customer_id = u.ID')
             inquiries = cursor.fetchall()
 
             cursor.close()
@@ -35,3 +36,4 @@ class Inquiry:
 
         except Exception as e:
             print(e)
+            return jsonify("error on fetching data"), 500

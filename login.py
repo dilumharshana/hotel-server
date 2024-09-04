@@ -25,9 +25,11 @@ def login(data):
         cursor.execute(query, (email,))
         user = cursor.fetchone()
 
+        print(user)
+
         if user and user['PASSWORD'] == password:
             user_type = user['TYPE']
-            if user_type.lower() == 'ADMIN':
+            if user_type.lower() == 'admin' or user_type.lower() == 'super_admin':
                 return jsonify({'success': True, 'redirect': '/admin', 'user_type': 'admin'}), 200
             else:
                 return jsonify({'success': True, 'redirect': '/home', 'user_type': 'customer', 'customer_id': user['ID'], 'customer_name': user['NAME']}), 200

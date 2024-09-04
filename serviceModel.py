@@ -72,7 +72,7 @@ class Service:
         cursor = None
         try:
             connection = db.get_db_connection()
-            cursor = connection.cursor(dictionary=True)
+            cursor = connection.cursor(buffered=True, dictionary=True)
             cursor.execute('SELECT * FROM SERVICES')
             services = cursor.fetchall()
             cursor.close()

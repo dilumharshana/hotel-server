@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify
 from database_connection import db
-from customersController import createCustomer
+from customersController import createCustomer, getCustomer
 from offersController import createOffer, getAllOffers, updateOffer, activateOffer, deleteOffer
 from serviceController import createService, getAllService, updateService, activateService, deleteService
-from reservationController import create_reservation
+from reservationController import create_reservation, get_reservations
 from inquiryController import createInquiry, getAllInquiries
 from login import login
 from flask_cors import CORS
@@ -22,6 +22,11 @@ def responseToTheHomeRoute():
 @app.route('/customer', methods=['POST'])
 def handleCreateCustomer():
     return createCustomer(request.json)
+
+
+@app.route('/customer', methods=['GET'])
+def handleGetCustomers():
+    return getCustomer()
 
 
 @app.route('/offer', methods=['POST'])
@@ -79,6 +84,11 @@ def getService():
 @app.route('/reservation', methods=['POST'])
 def createReservation():
     return create_reservation(request.json)
+
+
+@app.route('/reservation', methods=['GET'])
+def getReservations():
+    return get_reservations()
 
 
 # @app.route('/reservation/<int:reservation_id>', methods=['PUT'])
