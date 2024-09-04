@@ -4,6 +4,8 @@ from customersController import createCustomer
 from offersController import createOffer, getAllOffers, updateOffer, activateOffer, deleteOffer
 from serviceController import createService, getAllService, updateService, activateService, deleteService
 from reservationController import create_reservation
+from inquiryController import createInquiry, getAllInquiries
+from login import login
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -101,6 +103,23 @@ def createReservation():
 # def get_available_banquet_halls():
 #     date = request.args.get('date')
 #     return ReservationHandler().get_available_banquet_halls(date)
+
+
+# login routes
+@app.route('/login', methods=['POST'])
+def handleLogin():
+    return login(request.json)
+
+
+@app.route('/inquiry', methods=['POST'])
+def handleCreateInquiry():
+    return createInquiry(request.json)
+
+
+@app.route('/inquiry', methods=['GET'])
+def handleGetInquiries():
+    return getAllInquiries()
+
 
 if __name__ == '__main__':
     app.run()

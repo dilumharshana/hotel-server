@@ -75,8 +75,7 @@ class Service:
             cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM SERVICES')
             services = cursor.fetchall()
+            cursor.close()
             return jsonify({'services': services}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            cursor.close()
