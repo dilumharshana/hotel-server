@@ -8,6 +8,7 @@ class Service:
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor()
+
             query = 'INSERT INTO `hotel`.`services` (`NAME`, `DESCRIPTION`, `IS_ACTIVE`) VALUES (%s, %s, %s);'
             cursor.execute(query, (serviceData['name'],
                                    serviceData['description'], serviceData['isActive']))
@@ -72,7 +73,7 @@ class Service:
         cursor = None
         try:
             connection = db.get_db_connection()
-            cursor = connection.cursor(buffered=True, dictionary=True)
+            cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM SERVICES')
             services = cursor.fetchall()
             cursor.close()

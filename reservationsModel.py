@@ -121,7 +121,7 @@ class ReservationHandler:
 
     def get_all_reservations(self):
         connection = db.get_db_connection()
-        cursor = connection.cursor(buffered=True, dictionary=True)
+        cursor = connection.cursor(dictionary=True)
 
         try:
 

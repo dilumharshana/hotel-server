@@ -69,7 +69,7 @@ class Offer:
     def getAllOffers(self):
         try:
             connection = db.get_db_connection()
-            cursor = connection.cursor(buffered=True, dictionary=True)
+            cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM OFFERS')
             offers = cursor.fetchall()
             cursor.close()

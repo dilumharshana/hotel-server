@@ -22,7 +22,7 @@ class Customer:
     def getCustomers(self):
         try:
             connection = db.get_db_connection()
-            cursor = connection.cursor(buffered=True, dictionary=True)
+            cursor = connection.cursor(dictionary=True)
 
             cursor.execute('SELECT * FROM USERS where ROLE = 4')
             customers = cursor.fetchall()

@@ -25,7 +25,7 @@ class Inquiry:
     def getAllInquiries(self, ):
         try:
             connection = db.get_db_connection()
-            cursor = connection.cursor(buffered=True, dictionary=True)
+            cursor = connection.cursor(dictionary=True)
 
             cursor.execute(
                 'SELECT i.*, u.* FROM INQUIRES i INNER JOIN USERS u ON i.customer_id = u.ID')

@@ -5,11 +5,25 @@ from offersController import createOffer, getAllOffers, updateOffer, activateOff
 from serviceController import createService, getAllService, updateService, activateService, deleteService
 from reservationController import create_reservation, get_reservations
 from inquiryController import createInquiry, getAllInquiries
+from dashboardController import getDashboard
+from emailService import send_email, mail
 from login import login
 from flask_cors import CORS
 
+
 app = Flask(__name__)
 CORS(app)
+
+
+# Configure Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'dilum.harshana123@gmail.com'
+app.config['MAIL_PASSWORD'] = 'ajwm ysbv tuob curt'
+app.config['MAIL_DEFAULT_SENDER'] = 'dilum.harshana123@gmail.com'
+
+mail.init_app(app)
 
 db.connect()
 
@@ -129,6 +143,16 @@ def handleCreateInquiry():
 @app.route('/inquiry', methods=['GET'])
 def handleGetInquiries():
     return getAllInquiries()
+
+
+@app.route('/dashboard', methods=['GET'])
+def getDashboardData():
+    return getDashboard()
+
+
+@app.route('/email', methods=['POST'])
+def sendMail():
+    return send_email()
 
 
 if __name__ == '__main__':
