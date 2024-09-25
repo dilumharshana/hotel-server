@@ -5,8 +5,8 @@ from database_connection import db
 class Customer:
 
     def createCustomer(self, customerData):
+        connection = db.get_db_connection()
         try:
-            connection = db.get_db_connection()
             cursor = connection.cursor()
             query = 'INSERT INTO `hotel`.`users` (`NAME`, `EMAIL`, `CONTACT_NUMBER`, `ROLE`, `PASSWORD`, `IS_ACTIVE`) VALUES (%s, %s, %s, %s, %s, %s);'
             cursor.execute(query, (customerData['name'],
@@ -14,10 +14,12 @@ class Customer:
             connection.commit()
             customerId = cursor.lastrowid
             print("customerId =>", customerId)
-            cursor.close()
+            connection.close()
             return jsonify({'customerData': customerData, 'customerId': customerId}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+        finally:
+            connection.close()
 
     def getCustomers(self):
         try:
@@ -27,7 +29,7 @@ class Customer:
             cursor.execute('SELECT * FROM USERS where ROLE = 4')
             customers = cursor.fetchall()
 
-            cursor.close()
+            connection.close()
             return jsonify({'customers': customers}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500

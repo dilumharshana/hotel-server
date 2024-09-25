@@ -37,7 +37,5 @@ def login(data):
             return jsonify({'error': 'Invalid email or password'}), 401
 
     except mysql.connector.Error as err:
+        print(err)
         return jsonify({'error': f'Database error: {err}'}), 500
-
-    finally:
-        cursor.close()

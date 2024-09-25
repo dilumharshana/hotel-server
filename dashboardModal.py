@@ -30,7 +30,7 @@ class Dashboard:
             cursor.execute(query, ())
             customerCount = cursor.fetchall()
 
-            cursor.close()
+            connection.close()
 
             return jsonify({'offerCount': offerCount,
                             'serviceCount': serviceCount,

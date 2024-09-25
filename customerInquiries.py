@@ -16,7 +16,7 @@ class Inquiry:
             connection.commit()
             inquiryId = cursor.lastrowid
 
-            cursor.close()
+            connection.close()
             return jsonify({'inquiryId': inquiryId}), 200
 
         except Exception as e:
@@ -31,7 +31,7 @@ class Inquiry:
                 'SELECT i.*, u.* FROM INQUIRES i INNER JOIN USERS u ON i.customer_id = u.ID')
             inquiries = cursor.fetchall()
 
-            cursor.close()
+            connection.close()
             return jsonify({'inquiries': inquiries}), 200
 
         except Exception as e:

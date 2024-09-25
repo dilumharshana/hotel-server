@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from datetime import datetime
 from abc import ABC, abstractmethod
 from database_connection import db
+from emailService import send_email
 # Strategy Pattern for Reservation Types
 
 
@@ -44,15 +45,20 @@ class RoomReservationStrategy(ReservationStrategy):
                   data['num_adults'])
 
         cursor.execute(query, values)
-
         return selected_room
 
     def check_availability(self, cursor, data):
         available_rooms = self.get_available_rooms(
             cursor, data['check_in_date'], data['check_out_date'])
+        print(available_rooms)
         return len(available_rooms) > 0
 
     def get_available_rooms(self, cursor, check_in_date, check_out_date):
+        connection = db.get_db_connection()
+        cursor2 = connection.cursor()
+
+        print(check_in_date)
+        print(check_out_date)
         query = """
         SELECT r.id, r.room_number FROM rooms r
         WHERE r.id NOT IN (
@@ -63,39 +69,15 @@ class RoomReservationStrategy(ReservationStrategy):
             OR (check_in_date >= %s AND check_out_date <= %s))
         )
         """
-        cursor.execute(query, (check_in_date, check_in_date,
-                       check_out_date, check_out_date, check_in_date, check_out_date))
-        return cursor.fetchall()
-
-
-class BanquetHallReservationStrategy(ReservationStrategy):
-    def create_reservation(self, cursor, data):
-        query = """
-        INSERT INTO reservations 
-        (customer_name, customer_email, reservation_type, banquet_hall_id, check_in_date, num_guests)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        values = (data['customer_name'], data['customer_email'], 'banquet_hall',
-                  data['banquet_hall_id'], data['date'], data['num_guests'])
-        cursor.execute(query, values)
-        return cursor.lastrowid
-
-    def check_availability(self, cursor, data):
-        query = """
-        SELECT COUNT(*) FROM reservations
-        WHERE banquet_hall_id = %s AND reservation_type = 'banquet_hall'
-        AND check_in_date = %s
-        """
-        values = (data['banquet_hall_id'], data['date'])
-        cursor.execute(query, values)
-        return cursor.fetchone()[0] == 0
+        cursor2.execute(query, (check_in_date, check_in_date,
+                                check_out_date, check_out_date, check_in_date, check_out_date))
+        return cursor2.fetchall()
 
 
 class ReservationHandler:
     def __init__(self):
         self.strategies = {
             'room': RoomReservationStrategy(),
-            'banquet_hall': BanquetHallReservationStrategy()
         }
 
     def create_reservation(self, data):
@@ -109,15 +91,15 @@ class ReservationHandler:
 
         try:
             if not strategy.check_availability(cursor, data):
-                return jsonify({'error': 'Not available for the specified dates'}), 400
+                return jsonify({'error': 'Sorry! No rooms are available for the specified dates !'}), 200
 
             selected_room = strategy.create_reservation(cursor, data)
             connection.commit()
+            message = "You have successfully booked your room at ABC Hotel. Your room number is:" + selected_room
+            send_email(data['customer_email'], 'Room reservation', message)
             return jsonify({'message': 'Reservation created successfully', 'room_number': selected_room}), 200
         except Exception as err:
             return jsonify({'error: {err}'}), 500
-        finally:
-            cursor.close()
 
     def get_all_reservations(self):
         connection = db.get_db_connection()
@@ -128,7 +110,6 @@ class ReservationHandler:
             cursor.execute('SELECT * FROM RESERVATIONS')
             reservations = cursor.fetchall()
 
-            cursor.close()
             return jsonify({'reservations': reservations}), 200
         except Exception as err:
             return jsonify({'error: {err}'}), 500
@@ -157,9 +138,6 @@ class ReservationHandler:
             return jsonify({'message': 'Reservation updated successfully'}), 200
         except Exception as err:
             return jsonify({'error': f'Database error: {err}'}), 500
-        finally:
-            cursor.close()
-            connection.close()
 
     def delete_reservation(self, reservation_id):
         connection = mysql.connector.connect(**db_config)
@@ -176,9 +154,6 @@ class ReservationHandler:
             return jsonify({'message': 'Reservation deleted successfully'}), 200
         except Exception as err:
             return jsonify({'error': f'Database error: {err}'}), 500
-        finally:
-            cursor.close()
-            connection.close()
 
     def get_available_rooms(self, start_date, end_date):
         connection = mysql.connector.connect(**db_config)
@@ -201,28 +176,3 @@ class ReservationHandler:
             return jsonify(available_rooms), 200
         except Exception as err:
             return jsonify({'error': f'Database error: {err}'}), 500
-        finally:
-            cursor.close()
-            connection.close()
-
-    def get_available_banquet_halls(self, date):
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-
-        try:
-            query = """
-            SELECT bh.* FROM banquet_halls bh
-            WHERE bh.id NOT IN (
-                SELECT DISTINCT banquet_hall_id FROM reservations
-                WHERE reservation_type = 'banquet_hall'
-                AND check_in_date = %s
-            )
-            """
-            cursor.execute(query, (date,))
-            available_halls = cursor.fetchall()
-            return jsonify(available_halls), 200
-        except Exception as err:
-            return jsonify({'error': f'Database error: {err}'}), 500
-        finally:
-            cursor.close()
-            connection.close()
