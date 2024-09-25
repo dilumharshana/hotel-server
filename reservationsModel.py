@@ -95,7 +95,9 @@ class ReservationHandler:
 
             selected_room = strategy.create_reservation(cursor, data)
             connection.commit()
-            message = "You have successfully booked your room at ABC Hotel. Your room number is:" + selected_room
+            message = "Dear "+data['customer_name']+", You have successfully booked your room at ABC Hotel from "+data['check_in_date']+" to "+data['check_out_date']+". Your ROOM NUMBER is " + \
+                selected_room+". Thank you !, ABC Restaurant"
+
             send_email(data['customer_email'], 'Room reservation', message)
             return jsonify({'message': 'Reservation created successfully', 'room_number': selected_room}), 200
         except Exception as err:
