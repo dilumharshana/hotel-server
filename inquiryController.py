@@ -9,3 +9,7 @@ def createInquiry(inquiryData):
 
 def getAllInquiries():
     return inquiry.getAllInquiries()
+
+
+def sendInquiryReply(data):
+    return inquiry.sendInquiryReply(data)

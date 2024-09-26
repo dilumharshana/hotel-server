@@ -17,8 +17,6 @@ class Offer:
             return jsonify({'offerId': offerId}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def updateOffer(self, offerData):
         try:
@@ -33,8 +31,6 @@ class Offer:
             return jsonify({'offerId': rowCount}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def handleActivateOffer(self, offerData):
         try:
@@ -48,8 +44,6 @@ class Offer:
             return jsonify({'offerId': rowCount}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def deleteOffer(self, offerId):
         try:
@@ -63,8 +57,6 @@ class Offer:
             return jsonify({'offerId': rowCount}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def getAllOffers(self):
         try:
@@ -72,7 +64,6 @@ class Offer:
             cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM OFFERS')
             offers = cursor.fetchall()
-            connection.close()
             return jsonify({'offers': offers}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500

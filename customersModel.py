@@ -14,22 +14,16 @@ class Customer:
             connection.commit()
             customerId = cursor.lastrowid
             print("customerId =>", customerId)
-            connection.close()
             return jsonify({'customerData': customerData, 'customerId': customerId}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def getCustomers(self):
         try:
             connection = db.get_db_connection()
             cursor = connection.cursor(dictionary=True)
-
             cursor.execute('SELECT * FROM USERS where ROLE = 4')
             customers = cursor.fetchall()
-
-            connection.close()
             return jsonify({'customers': customers}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500

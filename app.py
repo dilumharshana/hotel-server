@@ -4,7 +4,7 @@ from customersController import createCustomer, getCustomer
 from offersController import createOffer, getAllOffers, updateOffer, activateOffer, deleteOffer
 from serviceController import createService, getAllService, updateService, activateService, deleteService
 from reservationController import create_reservation, get_reservations
-from inquiryController import createInquiry, getAllInquiries
+from inquiryController import createInquiry, getAllInquiries, sendInquiryReply
 from dashboardController import getDashboard
 from emailService import send_email, mail
 from login import login
@@ -143,6 +143,11 @@ def handleCreateInquiry():
 @app.route('/inquiry', methods=['GET'])
 def handleGetInquiries():
     return getAllInquiries()
+
+
+@app.route('/reply-inquiry', methods=['POST'])
+def handleSendInquiryReply():
+    return sendInquiryReply(request.json)
 
 
 @app.route('/dashboard', methods=['GET'])

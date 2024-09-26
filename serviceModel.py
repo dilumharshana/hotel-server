@@ -18,8 +18,6 @@ class Service:
             return jsonify({'serviceId': serviceId}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def updateService(self, serviceData):
         try:
@@ -34,8 +32,6 @@ class Service:
             return jsonify({'serviceId': rowCount}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def handleActivateService(self, serviceData):
         try:
@@ -50,8 +46,6 @@ class Service:
             return jsonify({'serviceId': rowCount}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def deleteService(self, serviceId):
         cursor = None
@@ -66,8 +60,6 @@ class Service:
             return jsonify({'serviceId': rowCount}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        finally:
-            connection.close()
 
     def getAllServices(self):
         cursor = None
@@ -76,7 +68,6 @@ class Service:
             cursor = connection.cursor(dictionary=True)
             cursor.execute('SELECT * FROM SERVICES')
             services = cursor.fetchall()
-            connection.close()
             return jsonify({'services': services}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 500
